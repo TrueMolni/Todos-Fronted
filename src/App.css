@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  margin-top: 50px;
 }
 
 .App-logo {
@@ -35,4 +36,16 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.input-container {
+  margin-bottom: 20px;
+}
+
+.todo {
+  margin-bottom: 10px;
+}
+
+.completed {
+  text-decoration: line-through;
 }
