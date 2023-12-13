@@ -11,6 +11,7 @@ import RegisterPage from './pages/RegisterPage';
 import MainPage from './pages/MainPage';
 import TodosPage from './pages/Todos';
 import IraTodosPage from './pages/IraTodos';
+import NotFoundPage from './pages/NotFound';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           {/* <Route element={<PrivateRoute />}> */}
           <Route path="/todos" element={<TodosPage />} />
           <Route path="/ira" element={<IraTodosPage />} />
+          <Route path="*" element={<NotFoundPage />} />
           {/* </Route> */}
         </Route>
       </Routes>
