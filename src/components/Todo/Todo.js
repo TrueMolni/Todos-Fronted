@@ -9,13 +9,13 @@ const Todo = ({ todo, onDelete, onToggle }) => {
         <input
           type="checkbox"
           checked={todo.completed}
-          onChange={() => onToggle(todo.id)}
+          onChange={() => onToggle(todo._id)}
           className="mr-2 cursor-pointer"
         />
         <span className="flex-1">{todo.text}</span>
       </div>
       <button
-        onClick={() => onDelete(todo.id)}
+        onClick={() => onDelete(todo._id)}
         className="text-red-500 hover:text-red-700 hover:bg-red-100 rounded-md"
       >
         Видалити

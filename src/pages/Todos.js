@@ -8,6 +8,7 @@ import Todo from '../components/Todo';
 
 const BASE_URL = 'https://todos-backend-20ft.onrender.com/api/todos';
 // const BASE_URL = 'https://armrainbow-dctn4q.stormkit.dev/api/todos';
+// const BASE_URL = 'http://localhost:3030/api/todos';
 
 const TodosPage = () => {
   const [todos, setTodos] = useState([]);
@@ -55,8 +56,8 @@ const TodosPage = () => {
     if (textInput.trim() !== '') {
       axios
         .post(`${BASE_URL}`, { text: textInput })
-        .then(response => {
-          setTodos(response.data);
+        .then(({ data }) => {
+          setTodos(prevState => [...prevState, data]);
           setTextInput('');
         })
         .catch(error => {
@@ -65,16 +66,35 @@ const TodosPage = () => {
     }
   };
 
-  const toggleTodo = id => {
-    axios
-      .put(`${BASE_URL}/${id}`)
-      .then(response => {
-        setTodos(response.data);
-      })
-      .catch(error => {
-        console.error('Помилка при відзначенні справи як виконаної:', error);
-      });
+  const toggleTodo = _id => {
+    const todoToUpdate = todos.find(todo => todo._id === _id);
+
+    if (todoToUpdate) {
+      const newCompleted = !todoToUpdate.completed;
+
+      if (newCompleted !== todoToUpdate.completed) {
+        axios
+          .put(`${BASE_URL}/${_id}`, { completed: newCompleted })
+          .then(response => {
+            setTodos(prevTodos => {
+              return prevTodos.map(todo => {
+                if (todo._id === _id) {
+                  return { ...todo, completed: newCompleted }; // замінюємо поле completed у зміненій картці
+                }
+                return todo; // залишаємо інші картки без змін
+              });
+            });
+          })
+          .catch(error => {
+            console.error(
+              `Помилка при відзначенні справи ${_id} як виконаної:`,
+              error
+            );
+          });
+      }
+    }
   };
+
   const toggleAllTodos = completedBool => {
     axios
       .patch(`${BASE_URL}/toggleall`, { completed: completedBool })
@@ -86,11 +106,13 @@ const TodosPage = () => {
       });
   };
 
-  const deleteTodo = id => {
+  const deleteTodo = _id => {
     axios
-      .delete(`${BASE_URL}/${id}`)
+      .delete(`${BASE_URL}/${_id}`)
       .then(response => {
-        setTodos(response.data);
+        setTodos(prevTodos => {
+          return prevTodos.filter(todo => todo._id !== _id); // видаляємо картку з масиву
+        });
       })
       .catch(error => {
         console.error('Помилка при видаленні справи:', error);
@@ -165,7 +187,7 @@ const TodosPage = () => {
         <div className="translate-x-60 opacity-0 c todos flex flex-wrap gap-10 justify-center">
           {todos.map(todo => (
             <Todo
-              key={todo.id}
+              key={todo._id}
               todo={todo}
               onDelete={deleteTodo}
               onToggle={toggleTodo}
